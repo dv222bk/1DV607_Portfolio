@@ -16,31 +16,33 @@ namespace CRUD.model
         public BoatList(int a_memberID)
         {
             m_memberID = a_memberID;
-            getBoatsFromFile();
+            GetBoatsFromFile();
         }
 
         /// <summary>
         /// Read all boats in a boatlist connected to the member with member id m_memberID
         /// </summary>
-        private void getBoatsFromFile()
+        private void GetBoatsFromFile()
         {
-            List<Boat> boatList = new List<Boat>();
             try
             {
-                using (StreamReader sr = new StreamReader(m_file))
+                if (File.Exists(m_file))
                 {
-                    while (!sr.EndOfStream)
+                    using (StreamReader sr = new StreamReader(m_file))
                     {
-                        Boat.Type type = (Boat.Type)int.Parse(sr.ReadLine());
-                        double length = double.Parse(sr.ReadLine());
-                        int memberID = int.Parse(sr.ReadLine());
-
-                        if (memberID == m_memberID)
+                        while (!sr.EndOfStream)
                         {
-                            m_boats.Add(new Boat(type, length, getUniqueBoatID()));
+                            Boat.Type type = (Boat.Type)int.Parse(sr.ReadLine());
+                            double length = double.Parse(sr.ReadLine());
+                            int memberID = int.Parse(sr.ReadLine());
+
+                            if (memberID == m_memberID)
+                            {
+                                m_boats.Add(new Boat(type, length, GetUniqueBoatID()));
+                            }
                         }
+                        sr.Close();
                     }
-                    sr.Close();
                 }
             }
             catch (Exception ex)
@@ -52,39 +54,42 @@ namespace CRUD.model
         /// <summary>
         /// Save all boats in the list to the boat list file
         /// </summary>
-        public void saveBoats()
+        public void SaveBoats()
         {
             try
             {
                 List<Boat> boatList = new List<Boat>();
 
-                // Add all boats not owned by the member to boatList
-                using (StreamReader sr = new StreamReader(m_file))
+                if (File.Exists(m_file))
                 {
-                    while (!sr.EndOfStream)
+                    // Add all boats not owned by the member to boatList
+                    using (StreamReader sr = new StreamReader(m_file))
                     {
-                        Boat.Type type = (Boat.Type)int.Parse(sr.ReadLine());
-                        double length = double.Parse(sr.ReadLine());
-                        int memberID = int.Parse(sr.ReadLine());
-
-                        if (memberID != m_memberID)
+                        while (!sr.EndOfStream)
                         {
-                            boatList.Add(new Boat(type, length, getUniqueBoatID()));
+                            Boat.Type type = (Boat.Type)int.Parse(sr.ReadLine());
+                            double length = double.Parse(sr.ReadLine());
+                            int memberID = int.Parse(sr.ReadLine());
+
+                            if (memberID != m_memberID)
+                            {
+                                boatList.Add(new Boat(type, length, GetUniqueBoatID()));
+                            }
                         }
+                        sr.Close();
                     }
-                    sr.Close();
                 }
 
                 // Add all boats owned by the member to the boatList
                 boatList.AddRange(m_boats);
 
                 // Save all boats in boatList to the file
-                using (StreamWriter sw = new StreamWriter(m_file))
+                using (StreamWriter sw = File.AppendText(m_file))
                 {
                     foreach (Boat boat in boatList)
                     {
-                        sw.WriteLine((int)boat.getType());
-                        sw.WriteLine(boat.getLength());
+                        sw.WriteLine((int)boat.GetType());
+                        sw.WriteLine(boat.GetLength());
                     }
                     sw.Close();
                 }
@@ -99,15 +104,15 @@ namespace CRUD.model
         /// Get a unique boat ID, only used in the application
         /// </summary>
         /// <returns>int. a unique boat ID for the member</returns>
-        private int getUniqueBoatID()
+        private int GetUniqueBoatID()
         {
             int highestBoatID = 0;
 
             foreach (Boat boat in m_boats)
             {
-                if (boat.getBoatID() > highestBoatID)
+                if (boat.GetBoatID() > highestBoatID)
                 {
-                    highestBoatID = boat.getBoatID();
+                    highestBoatID = boat.GetBoatID();
                 }
             }
 
@@ -118,14 +123,14 @@ namespace CRUD.model
         /// Remove a boat from the boat list
         /// </summary>
         /// <param name="a_boatID">int. The boat ID of the boat</param>
-        public void removeBoat(int a_boatID)
+        public void RemoveBoat(int a_boatID)
         {
             foreach (Boat boat in m_boats)
             {
-                if (boat.getBoatID() == a_boatID)
+                if (boat.GetBoatID() == a_boatID)
                 {
                     m_boats.Remove(boat);
-                    saveBoats();
+                    SaveBoats();
                     break;
                 }
             }
@@ -136,12 +141,12 @@ namespace CRUD.model
         /// </summary>
         /// <param name="a_type">Boat.Type. Type of boat</param>
         /// <param name="a_length">double. The length of the boat</param>
-        public void addBoat(Boat.Type a_type, double a_length)
+        public void AddBoat(Boat.Type a_type, double a_length)
         {
             try
             {
-                m_boats.Add(new Boat(a_type, a_length, getUniqueBoatID()));
-                saveBoats();
+                m_boats.Add(new Boat(a_type, a_length, GetUniqueBoatID()));
+                SaveBoats();
             }
             catch (Exception ex)
             {
@@ -155,17 +160,17 @@ namespace CRUD.model
         /// <param name="a_boatID">int. The boats ID</param>
         /// <param name="a_type">Boat.Type. The type of boat</param>
         /// <param name="a_length">double. The length of the boat</param>
-        public void changeBoatInfo(int a_boatID, Boat.Type a_type, double a_length)
+        public void ChangeBoatInfo(int a_boatID, Boat.Type a_type, double a_length)
         {
             try
             {
                 foreach (Boat boat in m_boats)
                 {
-                    if (boat.getBoatID() == a_boatID)
+                    if (boat.GetBoatID() == a_boatID)
                     {
-                        boat.setType(a_type);
-                        boat.setLength(a_length);
-                        saveBoats();
+                        boat.SetType(a_type);
+                        boat.SetLength(a_length);
+                        SaveBoats();
                         break;
                     }
                 }
@@ -180,7 +185,7 @@ namespace CRUD.model
         /// Get all boats in a list
         /// </summary>
         /// <returns>List<Boat>. A list of all boats for member m_memberID</returns>
-        public List<Boat> getBoats()
+        public List<Boat> GetBoats()
         {
             return m_boats;
         }

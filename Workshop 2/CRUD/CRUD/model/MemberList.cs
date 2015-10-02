@@ -14,27 +14,30 @@ namespace CRUD.model
 
         public MemberList()
         {
-            getMembersFromFile();
+            GetMembersFromFile();
         }
 
         /// <summary>
         /// Read all members in a member list
         /// </summary>
-        private void getMembersFromFile()
+        private void GetMembersFromFile()
         {
             try
             {
-                using (StreamReader sr = new StreamReader(m_file))
+                if (File.Exists(m_file))
                 {
-                    while(!sr.EndOfStream)
+                    using (StreamReader sr = new StreamReader(m_file))
                     {
-                        string name = sr.ReadLine();
-                        int pNumber = int.Parse(sr.ReadLine());
-                        int memberID = int.Parse(sr.ReadLine());
-                        BoatList boatList = new BoatList(memberID);
-                        m_members.Add(new Member(name, pNumber, memberID, boatList));
+                        while (!sr.EndOfStream)
+                        {
+                            string name = sr.ReadLine();
+                            int pNumber = int.Parse(sr.ReadLine());
+                            int memberID = int.Parse(sr.ReadLine());
+                            BoatList boatList = new BoatList(memberID);
+                            m_members.Add(new Member(name, pNumber, memberID, boatList));
+                        }
+                        sr.Close();
                     }
-                    sr.Close();
                 }
             }
             catch (Exception ex)
@@ -48,13 +51,13 @@ namespace CRUD.model
         /// </summary>
         /// <param name="a_name">string. The name of the member</param>
         /// <param name="a_pNumber">int. The personalnumber of the member</param>
-        public void addMember(string a_name, int a_pNumber) 
+        public void AddMember(string a_name, int a_pNumber) 
         {
             try
             {
-                int memberID = getUniqueMemberID();
+                int memberID = GetUniqueMemberID();
                 m_members.Add(new Member(a_name, a_pNumber, memberID, new BoatList(memberID)));
-                saveMembers();
+                SaveMembers();
             }
             catch (Exception ex)
             {
@@ -66,15 +69,15 @@ namespace CRUD.model
         /// Get a unique memberID based on the highest memberID in the memberlist
         /// </summary>
         /// <returns>int, a unique memberID</returns>
-        private int getUniqueMemberID()
+        private int GetUniqueMemberID()
         {
             int highestMemberID = 0;
 
             foreach (Member member in m_members)
             {
-                if (member.getMemberID() > highestMemberID)
+                if (member.GetMemberID() > highestMemberID)
                 {
-                    highestMemberID = member.getMemberID();
+                    highestMemberID = member.GetMemberID();
                 }
             }
 
@@ -84,17 +87,17 @@ namespace CRUD.model
         /// <summary>
         /// Saves all members in the list to the member file
         /// </summary>
-        public void saveMembers()
+        public void SaveMembers()
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter(m_file))
+                using (StreamWriter sw = File.AppendText(m_file))
                 {
                     foreach (Member member in m_members)
                     {
-                        sw.WriteLine(member.getName());
-                        sw.WriteLine(member.getPNumber());
-                        sw.WriteLine(member.getMemberID());
+                        sw.WriteLine(member.GetName());
+                        sw.WriteLine(member.GetPNumber());
+                        sw.WriteLine(member.GetMemberID());
                     }
                     sw.Close();
                 }
@@ -111,17 +114,17 @@ namespace CRUD.model
         /// <param name="a_memberID">int. MemberID of the member</param>
         /// <param name="a_name">string. Name of the member</param>
         /// <param name="a_pNumber">int. Personal number of the member</param>
-        public void changeMemberInfo(int a_memberID, string a_name, int a_pNumber)
+        public void ChangeMemberInfo(int a_memberID, string a_name, int a_pNumber)
         {
             try
             {
                 foreach (Member member in m_members)
                 {
-                    if (member.getMemberID() == a_memberID)
+                    if (member.GetMemberID() == a_memberID)
                     {
-                        member.setName(a_name);
-                        member.setPNumber(a_pNumber);
-                        saveMembers();
+                        member.SetName(a_name);
+                        member.SetPNumber(a_pNumber);
+                        SaveMembers();
                         break;
                     }
                 }
@@ -136,14 +139,14 @@ namespace CRUD.model
         /// Remove a member from the memberlist
         /// </summary>
         /// <param name="a_memberID">int. MemberID of the member</param>
-        public void removeMember(int a_memberID)
+        public void RemoveMember(int a_memberID)
         {
             foreach (Member member in m_members)
             {
-                if (member.getMemberID() == a_memberID)
+                if (member.GetMemberID() == a_memberID)
                 {
                     m_members.Remove(member);
-                    saveMembers();
+                    SaveMembers();
                     break;
                 }
             }
@@ -153,7 +156,7 @@ namespace CRUD.model
         /// Get the member list
         /// </summary>
         /// <returns>List<Member>. List of all members</returns>
-        public List<Member> getMembers()
+        public List<Member> GetMembers()
         {
             return m_members;
         }

@@ -36,7 +36,7 @@ namespace CRUD.model
         /// Get the boats type
         /// </summary>
         /// <returns>Type. The boats type</returns>
-        public Type getType() {
+        public Type GetType() {
             return m_type;
         }
 
@@ -44,7 +44,7 @@ namespace CRUD.model
         /// Get the boats length
         /// </summary>
         /// <returns>double. The boats length</returns>
-        public double getLength()
+        public double GetLength()
         {
             return m_length;
         }
@@ -53,7 +53,7 @@ namespace CRUD.model
         /// Get the boats ID
         /// </summary>
         /// <returns>int. The boats ID</returns>
-        public int getBoatID()
+        public int GetBoatID()
         {
             return m_boatID;
         }
@@ -62,7 +62,7 @@ namespace CRUD.model
         /// Set the boats type
         /// </summary>
         /// <param name="a_type">Type. The boats type</param>
-        public void setType(Type a_type)
+        public void SetType(Type a_type)
         {
             m_type = a_type;
         }
@@ -71,7 +71,7 @@ namespace CRUD.model
         /// Set the boats length
         /// </summary>
         /// <param name="a_length">double. The boats length</param>
-        public void setLength(double a_length)
+        public void SetLength(double a_length)
         {
             m_length = a_length;
         }

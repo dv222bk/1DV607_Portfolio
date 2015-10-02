@@ -40,7 +40,7 @@ namespace CRUD.model
         /// Get the members name
         /// </summary>
         /// <returns>string. The members name</returns>
-        public string getName()
+        public string GetName()
         {
             return m_name;
         }
@@ -49,7 +49,7 @@ namespace CRUD.model
         /// Get the members personal number
         /// </summary>
         /// <returns>int. The members personal number</returns>
-        public int getPNumber()
+        public int GetPNumber()
         {
             return m_pNumber;
         }
@@ -58,7 +58,7 @@ namespace CRUD.model
         /// Get the members memberID
         /// </summary>
         /// <returns>int. The members memberID</returns>
-        public int getMemberID()
+        public int GetMemberID()
         {
             return m_memberID;
         }
@@ -67,7 +67,7 @@ namespace CRUD.model
         /// Get the members list of boat
         /// </summary>
         /// <returns>BoatList. The members list of boats</returns>
-        public BoatList getBoatList()
+        public BoatList GetBoatList()
         {
             return m_boatList;
         }
@@ -76,7 +76,7 @@ namespace CRUD.model
         /// Set the members name
         /// </summary>
         /// <param name="a_name">string. The members name</param>
-        public void setName(string a_name) {
+        public void SetName(string a_name) {
             if (a_name == "" || a_name == null)
             {
                 throw new ArgumentNullException("name is null");
@@ -89,7 +89,7 @@ namespace CRUD.model
         /// Set the members personal number
         /// </summary>
         /// <param name="a_pNumber">int. The members personal number</param>
-        public void setPNumber(int a_pNumber)
+        public void SetPNumber(int a_pNumber)
         {
             if (a_pNumber.ToString().Length != 12)
             {

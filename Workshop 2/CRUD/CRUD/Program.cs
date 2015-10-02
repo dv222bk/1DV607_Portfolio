@@ -10,6 +10,11 @@ namespace CRUD
     {
         static void Main(string[] args)
         {
+            model.MemberList memberList = new model.MemberList();
+            view.Console console = new view.Console();
+            controller.User user = new controller.User(memberList, console);
+
+            user.RunApplication();
         }
     }
 }
