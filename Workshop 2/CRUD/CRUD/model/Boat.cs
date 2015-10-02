@@ -8,6 +8,10 @@ namespace CRUD.model
 {
     class Boat
     {
+
+        /// <summary>
+        /// Enum describing the different boat types a boat can have
+        /// </summary>
         public enum Type
         {
             Sailboat,
@@ -19,20 +23,57 @@ namespace CRUD.model
 
         Type m_type;
         double m_length;
+        int m_boatID;
 
-        public Boat(Type a_type, double a_length)
+        public Boat(Type a_type, double a_length, int a_boatID)
         {
             m_type = a_type;
             m_length = a_length;
+            m_boatID = a_boatID;
         }
 
+        /// <summary>
+        /// Get the boats type
+        /// </summary>
+        /// <returns>Type. The boats type</returns>
         public Type getType() {
             return m_type;
         }
 
+        /// <summary>
+        /// Get the boats length
+        /// </summary>
+        /// <returns>double. The boats length</returns>
         public double getLength()
         {
             return m_length;
+        }
+
+        /// <summary>
+        /// Get the boats ID
+        /// </summary>
+        /// <returns>int. The boats ID</returns>
+        public int getBoatID()
+        {
+            return m_boatID;
+        }
+
+        /// <summary>
+        /// Set the boats type
+        /// </summary>
+        /// <param name="a_type">Type. The boats type</param>
+        public void setType(Type a_type)
+        {
+            m_type = a_type;
+        }
+
+        /// <summary>
+        /// Set the boats length
+        /// </summary>
+        /// <param name="a_length">double. The boats length</param>
+        public void setLength(double a_length)
+        {
+            m_length = a_length;
         }
     }
 }

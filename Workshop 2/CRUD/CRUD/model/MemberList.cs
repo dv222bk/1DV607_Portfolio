@@ -14,16 +14,14 @@ namespace CRUD.model
 
         public MemberList()
         {
-            m_members = getMembersFromFile();
+            getMembersFromFile();
         }
 
         /// <summary>
-        /// Read and return all members in a member list
+        /// Read all members in a member list
         /// </summary>
-        /// <returns>List<Member>. A list of all members in the member file</returns>
-        private List<Member> getMembersFromFile()
+        private void getMembersFromFile()
         {
-            List<Member> memberList = new List<Member>();
             try
             {
                 using (StreamReader sr = new StreamReader(m_file))
@@ -34,10 +32,10 @@ namespace CRUD.model
                         int pNumber = int.Parse(sr.ReadLine());
                         int memberID = int.Parse(sr.ReadLine());
                         BoatList boatList = new BoatList(memberID);
-                        memberList.Add(new Member(name, pNumber, memberID, boatList));
+                        m_members.Add(new Member(name, pNumber, memberID, boatList));
                     }
+                    sr.Close();
                 }
-                return memberList;
             }
             catch (Exception ex)
             {
@@ -98,6 +96,7 @@ namespace CRUD.model
                         sw.WriteLine(member.getPNumber());
                         sw.WriteLine(member.getMemberID());
                     }
+                    sw.Close();
                 }
             }
             catch (Exception ex)
@@ -130,6 +129,23 @@ namespace CRUD.model
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Remove a member from the memberlist
+        /// </summary>
+        /// <param name="a_memberID">int. MemberID of the member</param>
+        public void removeMember(int a_memberID)
+        {
+            foreach (Member member in m_members)
+            {
+                if (member.getMemberID() == a_memberID)
+                {
+                    m_members.Remove(member);
+                    saveMembers();
+                    break;
+                }
             }
         }
 
