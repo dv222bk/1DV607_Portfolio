@@ -9,18 +9,18 @@ namespace CRUD.model
     class Member
     {
         string m_name;
-        int m_pNumber;
+        long m_pNumber;
         int m_memberID;
         BoatList m_boatList;
 
-        public Member(string a_name, int a_pNumber, int a_memberID, BoatList a_boatList)
+        public Member(string a_name, long a_pNumber, int a_memberID, BoatList a_boatList)
         {
             if (a_name == "" || a_name == null)
             {
                 throw new ArgumentNullException("name is null");
             }
 
-            if(a_pNumber.ToString().Length != 12) 
+            if (a_pNumber.ToString().Length != 12 && a_pNumber >= 100000000000) 
             {
                 throw new ArgumentException("pNumber has an invalid format. Should be YYYYMMDDXXXX");
             }
@@ -49,7 +49,7 @@ namespace CRUD.model
         /// Get the members personal number
         /// </summary>
         /// <returns>int. The members personal number</returns>
-        public int GetPNumber()
+        public long GetPNumber()
         {
             return m_pNumber;
         }
@@ -89,7 +89,7 @@ namespace CRUD.model
         /// Set the members personal number
         /// </summary>
         /// <param name="a_pNumber">int. The members personal number</param>
-        public void SetPNumber(int a_pNumber)
+        public void SetPNumber(long a_pNumber)
         {
             if (a_pNumber.ToString().Length != 12)
             {

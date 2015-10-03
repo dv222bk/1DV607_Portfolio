@@ -36,7 +36,7 @@ namespace CRUD.model
         /// Get the boats type
         /// </summary>
         /// <returns>Type. The boats type</returns>
-        public Type GetType() {
+        public Type GetBoatType() {
             return m_type;
         }
 

@@ -9,9 +9,9 @@ namespace CRUD.model
 {
     class BoatList
     {
-        List<Boat> m_boats;
+        List<Boat> m_boats = new List<Boat>();
         int m_memberID;
-        string m_file = "boats.txt";
+        string m_file = "database/boats.txt";
 
         public BoatList(int a_memberID)
         {
@@ -73,7 +73,7 @@ namespace CRUD.model
 
                             if (memberID != m_memberID)
                             {
-                                boatList.Add(new Boat(type, length, GetUniqueBoatID()));
+                                boatList.Add(new Boat(type, length, memberID));
                             }
                         }
                         sr.Close();
@@ -86,12 +86,20 @@ namespace CRUD.model
                 // Save all boats in boatList to the file
                 using (StreamWriter sw = File.AppendText(m_file))
                 {
-                    foreach (Boat boat in boatList)
+                    if (boatList.Count > 0)
                     {
-                        sw.WriteLine((int)boat.GetType());
-                        sw.WriteLine(boat.GetLength());
+                        foreach (Boat boat in boatList)
+                        {
+                            sw.WriteLine((int)boat.GetBoatType());
+                            sw.WriteLine(boat.GetLength());
+                        }
+                        sw.Close();
                     }
-                    sw.Close();
+                    else
+                    {
+                        sw.Close();
+                        File.WriteAllText(m_file, String.Empty);
+                    }
                 }
             }
             catch (Exception ex)
@@ -116,7 +124,7 @@ namespace CRUD.model
                 }
             }
 
-            return highestBoatID++;
+            return highestBoatID + 1;
         }
 
         /// <summary>
@@ -134,6 +142,15 @@ namespace CRUD.model
                     break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Removes all boats from the list
+        /// </summary>
+        public void RemoveAllBoats()
+        {
+            m_boats = new List<Boat>();
+            SaveBoats();
         }
 
         /// <summary>

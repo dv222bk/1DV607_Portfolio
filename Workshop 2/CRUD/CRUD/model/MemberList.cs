@@ -9,8 +9,8 @@ namespace CRUD.model
 {
     class MemberList
     {
-        List<Member> m_members;
-        string m_file = "members.txt";
+        List<Member> m_members = new List<Member>();
+        string m_file = "database/members.txt";
 
         public MemberList()
         {
@@ -31,7 +31,7 @@ namespace CRUD.model
                         while (!sr.EndOfStream)
                         {
                             string name = sr.ReadLine();
-                            int pNumber = int.Parse(sr.ReadLine());
+                            long pNumber = long.Parse(sr.ReadLine());
                             int memberID = int.Parse(sr.ReadLine());
                             BoatList boatList = new BoatList(memberID);
                             m_members.Add(new Member(name, pNumber, memberID, boatList));
@@ -51,7 +51,7 @@ namespace CRUD.model
         /// </summary>
         /// <param name="a_name">string. The name of the member</param>
         /// <param name="a_pNumber">int. The personalnumber of the member</param>
-        public void AddMember(string a_name, int a_pNumber) 
+        public void AddMember(string a_name, long a_pNumber) 
         {
             try
             {
@@ -81,7 +81,7 @@ namespace CRUD.model
                 }
             }
 
-            return highestMemberID++;
+            return highestMemberID + 1;
         }
 
         /// <summary>
@@ -91,15 +91,24 @@ namespace CRUD.model
         {
             try
             {
+                File.Create(m_file).Dispose();
                 using (StreamWriter sw = File.AppendText(m_file))
                 {
-                    foreach (Member member in m_members)
+                    if (m_members.Count() > 0)
                     {
-                        sw.WriteLine(member.GetName());
-                        sw.WriteLine(member.GetPNumber());
-                        sw.WriteLine(member.GetMemberID());
+                        foreach (Member member in m_members)
+                        {
+                            sw.WriteLine(member.GetName());
+                            sw.WriteLine(member.GetPNumber());
+                            sw.WriteLine(member.GetMemberID());
+                        }
+                        sw.Close();
                     }
-                    sw.Close();
+                    else
+                    {
+                        sw.Close();
+                        File.WriteAllText(m_file, String.Empty);
+                    }
                 }
             }
             catch (Exception ex)
@@ -114,20 +123,13 @@ namespace CRUD.model
         /// <param name="a_memberID">int. MemberID of the member</param>
         /// <param name="a_name">string. Name of the member</param>
         /// <param name="a_pNumber">int. Personal number of the member</param>
-        public void ChangeMemberInfo(int a_memberID, string a_name, int a_pNumber)
+        public void ChangeMemberInfo(Member a_member, string a_name, long a_pNumber)
         {
             try
             {
-                foreach (Member member in m_members)
-                {
-                    if (member.GetMemberID() == a_memberID)
-                    {
-                        member.SetName(a_name);
-                        member.SetPNumber(a_pNumber);
-                        SaveMembers();
-                        break;
-                    }
-                }
+                a_member.SetName(a_name);
+                a_member.SetPNumber(a_pNumber);
+                SaveMembers();
             }
             catch (Exception ex)
             {
@@ -138,18 +140,12 @@ namespace CRUD.model
         /// <summary>
         /// Remove a member from the memberlist
         /// </summary>
-        /// <param name="a_memberID">int. MemberID of the member</param>
-        public void RemoveMember(int a_memberID)
+        /// <param name="a_member">Member. Member to be removed</param>
+        public void RemoveMember(Member a_member)
         {
-            foreach (Member member in m_members)
-            {
-                if (member.GetMemberID() == a_memberID)
-                {
-                    m_members.Remove(member);
-                    SaveMembers();
-                    break;
-                }
-            }
+            a_member.GetBoatList().RemoveAllBoats();
+            m_members.Remove(a_member);
+            SaveMembers();
         }
 
         /// <summary>
