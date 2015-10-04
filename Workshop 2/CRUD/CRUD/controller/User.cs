@@ -88,6 +88,7 @@ namespace CRUD.controller
                         return;
                     }
                 }
+                m_console.SetCurrentMenu(view.Console.CurrentMenu.Member);
             }
             GetCurrentMenu(a_member);
         }
@@ -95,8 +96,18 @@ namespace CRUD.controller
         private void AddMember()
         {
             m_console.AddMember();
+            string name;
+            while (true)
+            {
+                m_console.WriteMessage("Name: ");
+                name = m_console.ReadResponse();
+                if (name.Length > 0)
+                {
+                    break;
+                }
+                m_console.WriteMessage("The member must have a name");
+            }
             m_console.WriteMessage("Name: ");
-            string name = m_console.ReadResponse();
             string pNumber;
             while (true)
             {
@@ -190,36 +201,48 @@ namespace CRUD.controller
 
         private void EditBoat(model.Member a_member, int a_boatID)
         {
-            m_console.EditBoat(a_member, a_boatID);
-            for (int i = 0; i < (int)model.Boat.Type.Count; i += 1)
+            bool boatExists = false;
+            foreach (model.Boat boat in a_member.GetBoatList().GetBoats())
             {
-                string message = string.Format("{0}: {1}", i, (model.Boat.Type)i);
-                m_console.WriteMessage(message);
-            }
-            string type;
-            while (true)
-            {
-                m_console.WriteMessage("New type: ");
-                type = m_console.ReadResponse();
-                if (type.All(char.IsNumber) && int.Parse(type) >= 0 && int.Parse(type) < (int)model.Boat.Type.Count)
+                if (boat.GetBoatID() == a_boatID)
                 {
+                    boatExists = true;
                     break;
                 }
-                m_console.WriteMessage("Invalid type, type must be a number choosen from the list above");
             }
-            double outLength;
-            while (true)
+            if (boatExists)
             {
-                string length;
-                m_console.WriteMessage("New length: ");
-                length = m_console.ReadResponse();
-                if (double.TryParse(length, out outLength))
+                m_console.EditBoat(a_member, a_boatID);
+                for (int i = 0; i < (int)model.Boat.Type.Count; i += 1)
                 {
-                    break;
+                    string message = string.Format("{0}: {1}", i, (model.Boat.Type)i);
+                    m_console.WriteMessage(message);
                 }
-                m_console.WriteMessage("Invalid length. Length must be of the format XX or XX.XX");
+                string type;
+                while (true)
+                {
+                    m_console.WriteMessage("New type: ");
+                    type = m_console.ReadResponse();
+                    if (type.All(char.IsNumber) && int.Parse(type) >= 0 && int.Parse(type) < (int)model.Boat.Type.Count)
+                    {
+                        break;
+                    }
+                    m_console.WriteMessage("Invalid type, type must be a number choosen from the list above");
+                }
+                double outLength;
+                while (true)
+                {
+                    string length;
+                    m_console.WriteMessage("New length: ");
+                    length = m_console.ReadResponse();
+                    if (double.TryParse(length, out outLength))
+                    {
+                        break;
+                    }
+                    m_console.WriteMessage("Invalid length. Length must be of the format XX or XX.XX");
+                }
+                a_member.GetBoatList().ChangeBoatInfo(a_boatID, (model.Boat.Type)int.Parse(type), outLength);
             }
-            a_member.GetBoatList().ChangeBoatInfo(a_boatID, (model.Boat.Type)int.Parse(type), outLength);
             m_console.SetCurrentMenu(view.Console.CurrentMenu.Member);
             GetCurrentMenu(a_member);
         }

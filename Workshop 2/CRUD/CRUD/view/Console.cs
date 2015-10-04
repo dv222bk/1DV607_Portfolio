@@ -180,10 +180,16 @@ namespace CRUD.view
             {
                 currentMenu = CurrentMenu.Main;
             }
-            else if (int.Parse(readResponse) != 0)
+            else
             {
-                currentMenu = CurrentMenu.EditBoat;
-                return int.Parse(readResponse);
+                int number = 0;
+                bool isNumeric = int.TryParse(readResponse, out number);
+
+                if (isNumeric && number > 0)
+                {
+                    currentMenu = CurrentMenu.Boat;
+                    return int.Parse(readResponse);
+                }
             }
 
             return 0;
@@ -193,6 +199,7 @@ namespace CRUD.view
 
         public void DisplayBoatMenu(model.Member a_member, int a_boatID)
         {
+            System.Console.Clear();
             System.Console.WriteLine("----------------------------------");
             System.Console.WriteLine("Boat:");
             DisplayBoat(a_member, a_boatID);
