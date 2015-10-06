@@ -9,8 +9,8 @@ namespace CRUD.model
 {
     class MemberList
     {
-        List<Member> m_members = new List<Member>();
-        string m_file = "database/members.txt";
+        private List<Member> m_members = new List<Member>();
+        private string m_filePath = "database/members.txt";
 
         public MemberList()
         {
@@ -24,9 +24,9 @@ namespace CRUD.model
         {
             try
             {
-                if (File.Exists(m_file))
+                if (File.Exists(m_filePath))
                 {
-                    using (StreamReader sr = new StreamReader(m_file))
+                    using (StreamReader sr = new StreamReader(m_filePath))
                     {
                         while (!sr.EndOfStream)
                         {
@@ -91,8 +91,8 @@ namespace CRUD.model
         {
             try
             {
-                File.Create(m_file).Dispose();
-                using (StreamWriter sw = File.AppendText(m_file))
+                File.Create(m_filePath).Dispose();
+                using (StreamWriter sw = File.AppendText(m_filePath))
                 {
                     if (m_members.Count() > 0)
                     {
@@ -107,7 +107,7 @@ namespace CRUD.model
                     else
                     {
                         sw.Close();
-                        File.WriteAllText(m_file, String.Empty);
+                        File.WriteAllText(m_filePath, String.Empty);
                     }
                 }
             }

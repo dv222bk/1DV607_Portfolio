@@ -9,10 +9,10 @@ namespace CRUD.model
 {
     class BoatList
     {
-        List<Boat> m_boats = new List<Boat>();
-        int m_memberID;
-        string m_file = "database/boats.txt";
-        string m_memberFile = "database/members.txt";
+        private List<Boat> m_boats = new List<Boat>();
+        private int m_memberID;
+        private string m_filePath = "database/boats.txt";
+        private string m_memberFilePath = "database/members.txt";
 
         public BoatList(int a_memberID)
         {
@@ -27,9 +27,9 @@ namespace CRUD.model
         {
             try
             {
-                if (File.Exists(m_file))
+                if (File.Exists(m_filePath))
                 {
-                    using (StreamReader sr = new StreamReader(m_file))
+                    using (StreamReader sr = new StreamReader(m_filePath))
                     {
                         while (!sr.EndOfStream)
                         {
@@ -60,10 +60,10 @@ namespace CRUD.model
             try
             {
                 List<BoatList> boatLists = new List<BoatList>();
-                if (File.Exists(m_file))
+                if (File.Exists(m_filePath))
                 {
                     // Add all boatLists not owned by the saving member to boatLists
-                    using (StreamReader sr = new StreamReader(m_memberFile))
+                    using (StreamReader sr = new StreamReader(m_memberFilePath))
                     {
                         while (!sr.EndOfStream)
                         {
@@ -82,10 +82,10 @@ namespace CRUD.model
                 boatLists.Add(this);
 
                 // Remove the old boats file to make room for the new one
-                File.Create(m_file).Dispose();
+                File.Create(m_filePath).Dispose();
 
                 // Save all boats to the file
-                using (StreamWriter sw = File.AppendText(m_file))
+                using (StreamWriter sw = File.AppendText(m_filePath))
                 {
                     if (boatLists.Count > 0)
                     {
@@ -103,7 +103,7 @@ namespace CRUD.model
                     else
                     {
                         sw.Close();
-                        File.WriteAllText(m_file, String.Empty);
+                        File.WriteAllText(m_filePath, String.Empty);
                     }
                 }
             }

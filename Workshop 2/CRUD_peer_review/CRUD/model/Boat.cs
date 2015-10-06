@@ -21,9 +21,9 @@ namespace CRUD.model
             Count
         }
 
-        Type m_type;
-        double m_length;
-        int m_boatID;
+        private Type m_type;
+        private double m_length;
+        private int m_boatID;
 
         public Boat(Type a_type, double a_length, int a_boatID)
         {

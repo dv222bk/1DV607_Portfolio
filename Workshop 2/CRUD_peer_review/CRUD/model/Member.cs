@@ -8,10 +8,10 @@ namespace CRUD.model
 {
     class Member
     {
-        string m_name;
-        long m_pNumber;
-        int m_memberID;
-        BoatList m_boatList;
+        private string m_name;
+        private long m_pNumber;
+        private int m_memberID;
+        private BoatList m_boatList;
 
         public Member(string a_name, long a_pNumber, int a_memberID, BoatList a_boatList)
         {

@@ -8,8 +8,8 @@ namespace CRUD.controller
 {
     class User
     {
-        model.MemberList m_memberList;
-        view.Console m_console;
+        private model.MemberList m_memberList;
+        private view.Console m_console;
 
         public User(model.MemberList a_memberList, view.Console a_console)
         {
@@ -17,29 +17,45 @@ namespace CRUD.controller
             m_console = a_console;
         }
 
+        /// <summary>
+        /// Run the application
+        /// </summary>
         public void RunApplication()
         {
             Main();
         }
 
+        /// <summary>
+        /// Main menu
+        /// </summary>
         private void Main()
         {
             m_console.DisplayMainMenu();
-            GetCurrentMenu();
+            m_console.MainMenuResponse();
+            GoToCurrentMenu();
         }
 
+        /// <summary>
+        /// A compact member list
+        /// </summary>
         private void CompactList()
         {
             m_console.DisplayCompactMemberList(m_memberList.GetMembers());
             MemberListResponse();
         }
 
+        /// <summary>
+        /// A verbose member list
+        /// </summary>
         private void VerboseList()
         {
             m_console.DisplayVerboseMemberList(m_memberList.GetMembers());
             MemberListResponse();
         }
 
+        /// <summary>
+        /// Get the users response from a member list and change the users menu position accordingly
+        /// </summary>
         private void MemberListResponse()
         {
             view.Console.CurrentMenu currentMenu = m_console.GetCurrentMenu();
@@ -52,16 +68,20 @@ namespace CRUD.controller
                     {
                         if (member.GetMemberID() == response)
                         {
-                            GetCurrentMenu(member);
+                            GoToCurrentMenu(member);
                             return;
                         }
                     }
                     m_console.SetCurrentMenu(currentMenu);
                 }
             }
-            GetCurrentMenu();
+            GoToCurrentMenu();
         }
 
+        /// <summary>
+        /// Show a specific member menu
+        /// </summary>
+        /// <param name="a_member">model.Member, the member to be displayed</param>
         private void Member(model.Member a_member)
         {
             m_console.DisplayMemberMenu();
@@ -69,13 +89,17 @@ namespace CRUD.controller
             MemberResponse(a_member);
         }
 
+        /// <summary>
+        /// Read a response from the user, from the specific member menu and change the users menu position accordingly
+        /// </summary>
+        /// <param name="a_member"></param>
         private void MemberResponse(model.Member a_member)
         {
             int response = m_console.GetMemberResponse();
             if (response == -1)
             {
                 m_memberList.RemoveMember(a_member);
-                GetCurrentMenu();
+                GoToCurrentMenu();
                 return;
             }
             else if (response > 0)
@@ -84,15 +108,18 @@ namespace CRUD.controller
                 {
                     if (boat.GetBoatID() == response)
                     {
-                        GetCurrentMenu(a_member, response);
+                        GoToCurrentMenu(a_member, response);
                         return;
                     }
                 }
                 m_console.SetCurrentMenu(view.Console.CurrentMenu.Member);
             }
-            GetCurrentMenu(a_member);
+            GoToCurrentMenu(a_member);
         }
 
+        /// <summary>
+        /// Add new member menu
+        /// </summary>
         private void AddMember()
         {
             m_console.AddMember();
@@ -121,9 +148,13 @@ namespace CRUD.controller
             }
             m_memberList.AddMember(name, long.Parse(pNumber));
             m_console.SetCurrentMenu(view.Console.CurrentMenu.Main);
-            GetCurrentMenu();
+            GoToCurrentMenu();
         }
 
+        /// <summary>
+        /// Edit a specific member menu
+        /// </summary>
+        /// <param name="a_member">model.Member, the member to be edited</param>
         private void EditMember(model.Member a_member)
         {
             m_console.EditMember(a_member);
@@ -142,9 +173,13 @@ namespace CRUD.controller
             }
             m_memberList.ChangeMemberInfo(a_member, name, long.Parse(pNumber));
             m_console.SetCurrentMenu(view.Console.CurrentMenu.Member);
-            GetCurrentMenu(a_member);
+            GoToCurrentMenu(a_member);
         }
 
+        /// <summary>
+        /// Add a boat menu
+        /// </summary>
+        /// <param name="a_member">model.Member, the member who owns the new boat</param>
         private void AddBoat(model.Member a_member)
         {
             m_console.AddBoat(a_member);
@@ -153,52 +188,66 @@ namespace CRUD.controller
                 string message = string.Format("{0}: {1}", i, (model.Boat.Type)i);
                 m_console.WriteMessage(message);
             }
-            string type;
+            int type;
             while (true)
             {
                 m_console.WriteMessage("Type: ");
-                type = m_console.ReadResponse();
-                if (type.All(char.IsNumber) && int.Parse(type) >= 0 && int.Parse(type) < (int)model.Boat.Type.Count)
+                bool isNumeric = int.TryParse(m_console.ReadResponse(), out type);
+                if (isNumeric && type >= 0 && type < (int)model.Boat.Type.Count)
                 {
                     break;
                 }
                 m_console.WriteMessage("Invalid type, type must be a number choosen from the list above");
             }
-            double outLength;
+            double length;
             while (true)
             {
-                string length;
                 m_console.WriteMessage("Length: ");
-                length = m_console.ReadResponse();
-                if (double.TryParse(length, out outLength))
+                bool isDouble = double.TryParse(m_console.ReadResponse(), out length);
+                if (isDouble && length > 0)
                 {
                     break;
                 }
-                m_console.WriteMessage("Invalid length. Length must be of the format XX or XX.XX");
+                m_console.WriteMessage("Invalid length. Length must be of the format XX or XX,XX");
             }
-            a_member.GetBoatList().AddBoat((model.Boat.Type)int.Parse(type), outLength);
+            a_member.GetBoatList().AddBoat((model.Boat.Type)type, length);
             m_console.SetCurrentMenu(view.Console.CurrentMenu.Member);
-            GetCurrentMenu(a_member);
+            GoToCurrentMenu(a_member);
         }
 
+        /// <summary>
+        /// Show a specific boat menu
+        /// </summary>
+        /// <param name="a_member">model.Member, the member that owns the boat</param>
+        /// <param name="a_boatID">int, the boatID of the boat</param>
         private void Boat(model.Member a_member, int a_boatID)
         {
             m_console.DisplayBoatMenu(a_member, a_boatID);
             BoatResponse(a_member, a_boatID);
         }
 
+        /// <summary>
+        /// Read a response from the user, from the specific boat menu and change the users menu position accordingly
+        /// </summary>
+        /// <param name="a_member">model.Member, the member that owns the boat</param>
+        /// <param name="a_boatID">int, the boatID of the boat</param>
         private void BoatResponse(model.Member a_member, int a_boatID)
         {
             int response = m_console.GetBoatResponse();
             if (response == -1)
             {
                 a_member.GetBoatList().RemoveBoat(a_boatID);
-                GetCurrentMenu(a_member);
+                GoToCurrentMenu(a_member);
                 return;
             }
-            GetCurrentMenu(a_member, a_boatID);
+            GoToCurrentMenu(a_member, a_boatID);
         }
 
+        /// <summary>
+        /// Edit boat menu
+        /// </summary>
+        /// <param name="a_member">model.Member, the member that owns the boat</param>
+        /// <param name="a_boatID">int, the boatID of the boat</param>
         private void EditBoat(model.Member a_member, int a_boatID)
         {
             bool boatExists = false;
@@ -218,36 +267,40 @@ namespace CRUD.controller
                     string message = string.Format("{0}: {1}", i, (model.Boat.Type)i);
                     m_console.WriteMessage(message);
                 }
-                string type;
+                int type;
                 while (true)
                 {
                     m_console.WriteMessage("New type: ");
-                    type = m_console.ReadResponse();
-                    if (type.All(char.IsNumber) && int.Parse(type) >= 0 && int.Parse(type) < (int)model.Boat.Type.Count)
+                    bool isNumeric = int.TryParse(m_console.ReadResponse(), out type);
+                    if (isNumeric && type >= 0 && type < (int)model.Boat.Type.Count)
                     {
                         break;
                     }
                     m_console.WriteMessage("Invalid type, type must be a number choosen from the list above");
                 }
-                double outLength;
+                double length;
                 while (true)
                 {
-                    string length;
                     m_console.WriteMessage("New length: ");
-                    length = m_console.ReadResponse();
-                    if (double.TryParse(length, out outLength))
+                    bool isDouble = double.TryParse(m_console.ReadResponse(), out length);
+                    if (isDouble && length > 0)
                     {
                         break;
                     }
-                    m_console.WriteMessage("Invalid length. Length must be of the format XX or XX.XX");
+                    m_console.WriteMessage("Invalid length. Length must be of the format XX or XX,XX");
                 }
-                a_member.GetBoatList().ChangeBoatInfo(a_boatID, (model.Boat.Type)int.Parse(type), outLength);
+                a_member.GetBoatList().ChangeBoatInfo(a_boatID, (model.Boat.Type)type, length);
             }
             m_console.SetCurrentMenu(view.Console.CurrentMenu.Member);
-            GetCurrentMenu(a_member);
+            GoToCurrentMenu(a_member);
         }
 
-        private void GetCurrentMenu(model.Member a_member = null, int a_boatID = 0)
+        /// <summary>
+        /// Get the current menu and move to that menu position
+        /// </summary>
+        /// <param name="a_member">model.Member, optional. a member needed to access a specific menu</param>
+        /// <param name="a_boatID">int, optional. A boatID needed to acces a specific menu</param>
+        private void GoToCurrentMenu(model.Member a_member = null, int a_boatID = 0)
         {
             view.Console.CurrentMenu currentMenu = m_console.GetCurrentMenu();
             if (currentMenu == view.Console.CurrentMenu.CompactList)
