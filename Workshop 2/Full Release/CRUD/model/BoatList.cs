@@ -10,13 +10,13 @@ namespace CRUD.model
     class BoatList
     {
         private List<Boat> m_boats = new List<Boat>();
+        private dal.BoatDAL m_boatDAL;
         private int m_memberID;
-        private string m_filePath = "database/boats.txt";
-        private string m_memberFilePath = "database/members.txt";
 
         public BoatList(int a_memberID)
         {
             m_memberID = a_memberID;
+            m_boatDAL = new dal.BoatDAL(a_memberID);
             GetBoatsFromFile();
         }
 
@@ -27,24 +27,7 @@ namespace CRUD.model
         {
             try
             {
-                if (File.Exists(m_filePath))
-                {
-                    using (StreamReader sr = new StreamReader(m_filePath))
-                    {
-                        while (!sr.EndOfStream)
-                        {
-                            Boat.Type type = (Boat.Type)int.Parse(sr.ReadLine());
-                            double length = double.Parse(sr.ReadLine());
-                            int memberID = int.Parse(sr.ReadLine());
-
-                            if (memberID == m_memberID)
-                            {
-                                m_boats.Add(new Boat(type, length, GetUniqueBoatID()));
-                            }
-                        }
-                        sr.Close();
-                    }
-                }
+                m_boats = m_boatDAL.GetBoatsFromFile();
             }
             catch (Exception ex)
             {
@@ -59,53 +42,7 @@ namespace CRUD.model
         {
             try
             {
-                List<BoatList> boatLists = new List<BoatList>();
-                if (File.Exists(m_filePath))
-                {
-                    // Add all boatLists not owned by the saving member to boatLists
-                    using (StreamReader sr = new StreamReader(m_memberFilePath))
-                    {
-                        while (!sr.EndOfStream)
-                        {
-                            sr.ReadLine();
-                            sr.ReadLine();
-                            int memberID = int.Parse(sr.ReadLine());
-                            if (memberID != m_memberID) {
-                                boatLists.Add(new BoatList(memberID));
-                            }
-                        }
-                        sr.Close();
-                    }
-                }
-
-                // Add this boatList to the boatLists
-                boatLists.Add(this);
-
-                // Remove the old boats file to make room for the new one
-                File.Create(m_filePath).Dispose();
-
-                // Save all boats to the file
-                using (StreamWriter sw = File.AppendText(m_filePath))
-                {
-                    if (boatLists.Count > 0)
-                    {
-                        foreach (BoatList boatList in boatLists)
-                        {
-                            foreach (Boat boat in boatList.GetBoats())
-                            {
-                                sw.WriteLine((int)boat.GetBoatType());
-                                sw.WriteLine(boat.GetLength());
-                                sw.WriteLine(boatList.GetMemberID());
-                            }
-                        }
-                        sw.Close();
-                    }
-                    else
-                    {
-                        sw.Close();
-                        File.WriteAllText(m_filePath, String.Empty);
-                    }
-                }
+                m_boatDAL.SaveBoats(this);
             }
             catch (Exception ex)
             {

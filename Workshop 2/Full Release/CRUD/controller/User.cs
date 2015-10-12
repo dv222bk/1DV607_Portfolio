@@ -36,20 +36,12 @@ namespace CRUD.controller
         }
 
         /// <summary>
-        /// A compact member list
+        /// Member list
         /// </summary>
-        private void CompactList()
+        /// <param name="a_compactList">bool. True for a compact list, false for a verbose</param>
+        private void MemberList(bool a_compactList)
         {
-            m_console.DisplayCompactMemberList(m_memberList.GetMembers());
-            MemberListResponse();
-        }
-
-        /// <summary>
-        /// A verbose member list
-        /// </summary>
-        private void VerboseList()
-        {
-            m_console.DisplayVerboseMemberList(m_memberList.GetMembers());
+            m_console.DisplayMemberList(m_memberList.GetMembers(), a_compactList);
             MemberListResponse();
         }
 
@@ -171,7 +163,7 @@ namespace CRUD.controller
                 }
                 m_console.WriteMessage("Wrong format, format should be YYYYMMDDXXXX");
             }
-            m_memberList.ChangeMemberInfo(a_member, name, long.Parse(pNumber));
+            m_memberList.ChangeMemberInfo(a_member.GetMemberID(), name, long.Parse(pNumber));
             m_console.SetCurrentMenu(view.Console.CurrentMenu.Member);
             GoToCurrentMenu(a_member);
         }
@@ -305,11 +297,11 @@ namespace CRUD.controller
             view.Console.CurrentMenu currentMenu = m_console.GetCurrentMenu();
             if (currentMenu == view.Console.CurrentMenu.CompactList)
             {
-                CompactList();
+                MemberList(true);
             }
             else if (currentMenu == view.Console.CurrentMenu.VerboseList)
             {
-                VerboseList();
+                MemberList(false);
             }
             else if (currentMenu == view.Console.CurrentMenu.AddMember)
             {

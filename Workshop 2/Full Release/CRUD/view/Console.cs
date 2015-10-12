@@ -86,35 +86,22 @@ namespace CRUD.view
         }
 
         /// <summary>
-        /// Displays a compact member list, which contains basic information, to the user. 
-        /// </summary>
-        /// <param name="a_memberList">List<model.Member>. Memberlist to display</param>
-        public void DisplayCompactMemberList(List<model.Member> a_memberList)
-        {
-            DisplayMemberListMenu();
-            System.Console.WriteLine("Compact memberlist");
-            if (a_memberList.Count < 1)
-            {
-                System.Console.WriteLine("There are no members in the list!");
-            }
-            else
-            {
-                foreach (model.Member member in a_memberList)
-                {
-                    DisplayMember(member, false, false);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Displays a verbose member list, with all information on record, to the user.
+        /// Displays a member list, with all information on record, to the user.
         /// </summary>
         /// <param name="a_memberList">List<model.Member>. MemberList to display</param>
-        public void DisplayVerboseMemberList(List<model.Member> a_memberList)
+        /// <param name="a_compactList">bool. True if a compact list should be shown, false otherwise</param>
+        public void DisplayMemberList(IEnumerable<model.Member> a_memberList, bool a_compactList)
         {
             DisplayMemberListMenu();
-            System.Console.WriteLine("Verbose memberlist");
-            if (a_memberList.Count < 1)
+            if (a_compactList)
+            {
+                System.Console.WriteLine("Compact memberlist");
+            }
+            else
+            {
+                System.Console.WriteLine("Verbose memberlist");
+            }
+            if (a_memberList.Count() < 1)
             {
                 System.Console.WriteLine("There are no members in the list!");
             }
@@ -122,7 +109,7 @@ namespace CRUD.view
             {
                 foreach (model.Member member in a_memberList)
                 {
-                    DisplayMember(member, true, true);
+                    DisplayMember(member, !a_compactList, !a_compactList);
                 }
             }
         }

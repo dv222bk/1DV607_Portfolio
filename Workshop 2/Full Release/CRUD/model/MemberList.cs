@@ -10,7 +10,7 @@ namespace CRUD.model
     class MemberList
     {
         private List<Member> m_members = new List<Member>();
-        private string m_filePath = "database/members.txt";
+        private dal.MemberDAL m_memberDAL = new dal.MemberDAL();
 
         public MemberList()
         {
@@ -24,21 +24,7 @@ namespace CRUD.model
         {
             try
             {
-                if (File.Exists(m_filePath))
-                {
-                    using (StreamReader sr = new StreamReader(m_filePath))
-                    {
-                        while (!sr.EndOfStream)
-                        {
-                            string name = sr.ReadLine();
-                            long pNumber = long.Parse(sr.ReadLine());
-                            int memberID = int.Parse(sr.ReadLine());
-                            BoatList boatList = new BoatList(memberID);
-                            m_members.Add(new Member(name, pNumber, memberID, boatList));
-                        }
-                        sr.Close();
-                    }
-                }
+                m_members = m_memberDAL.GetMembersFromFile();
             }
             catch (Exception ex)
             {
@@ -91,25 +77,7 @@ namespace CRUD.model
         {
             try
             {
-                File.Create(m_filePath).Dispose();
-                using (StreamWriter sw = File.AppendText(m_filePath))
-                {
-                    if (m_members.Count() > 0)
-                    {
-                        foreach (Member member in m_members)
-                        {
-                            sw.WriteLine(member.GetName());
-                            sw.WriteLine(member.GetPNumber());
-                            sw.WriteLine(member.GetMemberID());
-                        }
-                        sw.Close();
-                    }
-                    else
-                    {
-                        sw.Close();
-                        File.WriteAllText(m_filePath, String.Empty);
-                    }
-                }
+                m_memberDAL.SaveMembers(m_members);
             }
             catch (Exception ex)
             {
@@ -120,16 +88,23 @@ namespace CRUD.model
         /// <summary>
         /// Change a members information
         /// </summary>
-        /// <param name="a_memberID">int. MemberID of the member</param>
+        /// <param name="a_memberID">int. MemberID of the member to be edited</param>
         /// <param name="a_name">string. Name of the member</param>
         /// <param name="a_pNumber">int. Personal number of the member</param>
-        public void ChangeMemberInfo(Member a_member, string a_name, long a_pNumber)
+        public void ChangeMemberInfo(int a_memberID, string a_name, long a_pNumber)
         {
             try
             {
-                a_member.SetName(a_name);
-                a_member.SetPNumber(a_pNumber);
-                SaveMembers();
+                foreach (Member member in m_members)
+                {
+                    if (member.GetMemberID() == a_memberID)
+                    {
+                        member.SetName(a_name);
+                        member.SetPNumber(a_pNumber);
+                        SaveMembers();
+                        break;
+                    }
+                }
             }
             catch (Exception ex)
             {
