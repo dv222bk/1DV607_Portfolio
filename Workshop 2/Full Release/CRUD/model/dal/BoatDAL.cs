@@ -58,8 +58,8 @@ namespace CRUD.model.dal
         /// <summary>
         /// Save all boats in the list to the boat list file
         /// </summary>
-        /// <param name="a_memberBoatList">BoatList. A list of boats to be saved</param>
-        public void SaveBoats(model.BoatList a_memberBoatList)
+        /// <param name="a_boatList">BoatList. A list of boats to be saved</param>
+        public void SaveBoats(model.BoatList a_boatList)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace CRUD.model.dal
                 }
 
                 // Add this boatList to the boatLists
-                boatLists.Add(a_memberBoatList);
+                boatLists.Add(a_boatList);
 
                 // Remove the old boats file to make room for the new one
                 File.Create(m_boatFilePath).Dispose();

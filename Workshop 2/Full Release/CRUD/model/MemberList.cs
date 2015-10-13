@@ -14,22 +14,7 @@ namespace CRUD.model
 
         public MemberList()
         {
-            GetMembersFromFile();
-        }
-
-        /// <summary>
-        /// Read all members in a member list
-        /// </summary>
-        private void GetMembersFromFile()
-        {
-            try
-            {
-                m_members = m_memberDAL.GetMembersFromFile();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            m_members = m_memberDAL.GetMembersFromFile();
         }
 
         /// <summary>
@@ -43,7 +28,7 @@ namespace CRUD.model
             {
                 int memberID = GetUniqueMemberID();
                 m_members.Add(new Member(a_name, a_pNumber, memberID, new BoatList(memberID)));
-                SaveMembers();
+                m_memberDAL.SaveMembers(m_members);
             }
             catch (Exception ex)
             {
@@ -71,21 +56,6 @@ namespace CRUD.model
         }
 
         /// <summary>
-        /// Saves all members in the list to the member file
-        /// </summary>
-        public void SaveMembers()
-        {
-            try
-            {
-                m_memberDAL.SaveMembers(m_members);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        /// <summary>
         /// Change a members information
         /// </summary>
         /// <param name="a_memberID">int. MemberID of the member to be edited</param>
@@ -101,7 +71,7 @@ namespace CRUD.model
                     {
                         member.SetName(a_name);
                         member.SetPNumber(a_pNumber);
-                        SaveMembers();
+                        m_memberDAL.SaveMembers(m_members);
                         break;
                     }
                 }
@@ -120,7 +90,7 @@ namespace CRUD.model
         {
             a_member.GetBoatList().RemoveAllBoats();
             m_members.Remove(a_member);
-            SaveMembers();
+            m_memberDAL.SaveMembers(m_members);
         }
 
         /// <summary>

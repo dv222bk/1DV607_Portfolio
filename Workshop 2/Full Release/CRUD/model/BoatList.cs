@@ -17,37 +17,7 @@ namespace CRUD.model
         {
             m_memberID = a_memberID;
             m_boatDAL = new dal.BoatDAL(a_memberID);
-            GetBoatsFromFile();
-        }
-
-        /// <summary>
-        /// Read all boats in a boatlist connected to the member with member id m_memberID
-        /// </summary>
-        private void GetBoatsFromFile()
-        {
-            try
-            {
-                m_boats = m_boatDAL.GetBoatsFromFile();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        /// <summary>
-        /// Save all boats in the list to the boat list file
-        /// </summary>
-        public void SaveBoats()
-        {
-            try
-            {
-                m_boatDAL.SaveBoats(this);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            m_boats = m_boatDAL.GetBoatsFromFile();
         }
 
         /// <summary>
@@ -80,7 +50,7 @@ namespace CRUD.model
                 if (boat.GetBoatID() == a_boatID)
                 {
                     m_boats.Remove(boat);
-                    SaveBoats();
+                    m_boatDAL.SaveBoats(this);
                     break;
                 }
             }
@@ -92,7 +62,7 @@ namespace CRUD.model
         public void RemoveAllBoats()
         {
             m_boats = new List<Boat>();
-            SaveBoats();
+            m_boatDAL.SaveBoats(this);
         }
 
         /// <summary>
@@ -105,7 +75,7 @@ namespace CRUD.model
             try
             {
                 m_boats.Add(new Boat(a_type, a_length, GetUniqueBoatID()));
-                SaveBoats();
+                m_boatDAL.SaveBoats(this);
             }
             catch (Exception ex)
             {
@@ -129,7 +99,7 @@ namespace CRUD.model
                     {
                         boat.SetType(a_type);
                         boat.SetLength(a_length);
-                        SaveBoats();
+                        m_boatDAL.SaveBoats(this);
                         break;
                     }
                 }
